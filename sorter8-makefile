@@ -1,0 +1,36 @@
+# Makefile for the "sorter" program that uses the "bag" module.
+#
+# David Kotz - April 2017, 2019, 2021
+
+CC = gcc
+CFLAGS = -Wall -pedantic -std=c11 -ggdb
+
+OBJS = sorter8.o bag8.o readlinep.o
+LIBS = -lm
+TESTINPUT = ~/cs50-dev/shared/examples/billboard.tsv
+
+.PHONY: all clean test
+
+all: sorter
+
+# executable depends on object files
+sorter: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o sorter
+
+# object files depend on include files
+sorter8.o: bag8.h readlinep.h
+bag8.o: bag8.h
+readlinep.o: readlinep.h
+
+# two quick test cases
+test: sorter
+	@echo "### 100 lines of input"
+	sed 1,2d $(TESTINPUT) | cut -f 3 | ./sorter
+	@echo "### empty input"
+	./sorter < /dev/null
+	@echo "### done"
+
+clean:
+	rm -f sorter
+	rm -f *~ *.o
+	rm -rf *.dSYM
